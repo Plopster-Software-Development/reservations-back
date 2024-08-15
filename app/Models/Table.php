@@ -10,4 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Table extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
+
+    protected $fillable = [
+        'restaurant_id',
+        'table_name',
+        'capacity',
+        'status',
+        'location'
+    ];
 }

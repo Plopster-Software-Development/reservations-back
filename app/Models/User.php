@@ -19,8 +19,10 @@ class User extends Authenticatable implements MustVerifyEmailContract
      * @var array<int, string>
      */
     protected $fillable = [
+        'restaurant_id',
         'name',
         'email',
+        'phoneNumber',
         'password',
     ];
 

@@ -10,4 +10,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Client extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
+
+    protected $fillable = [
+        'restaurant_id',
+        'alias',
+        'email',
+        'phoneNumber'
+    ];
 }

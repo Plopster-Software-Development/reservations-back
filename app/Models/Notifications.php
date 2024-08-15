@@ -10,4 +10,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Notifications extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
+
+    protected $fillable = [
+        'reservation_id',
+        'message',
+        'send_date',
+        'status'
+    ];
 }

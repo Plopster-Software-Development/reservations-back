@@ -6,16 +6,20 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AuditLog extends Model
+class BillingInformation extends Model
 {
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'user_id',
-        'action_type',
-        'afected_table',
-        'afected_reg_id',
-        'action',
-        'details'
+        'restaurant_id',
+        'owner_name',
+        'owner_lastname',
+        'address',
+        'city',
+        'province',
+        'country',
+        'zip_code',
+        'phoneNumber',
+        'email'
     ];
 }
