@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Auth\OneTimeCodeService;
+use App\Services\Auth\BasicAuthService;
 use App\Traits\ResponseHandler;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class OTCAuthMiddleware
+class BasicAuthMiddleware
 {
     use ResponseHandler;
 
@@ -20,12 +20,12 @@ class OTCAuthMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            $secretAppKey = $request->header('CheckToken');
-            $oneTimeCode = $request->header('SecurityCode');
+            $authorization = $request->header('Authorization');
+            $apiKey = $request->header('x-api-key');
 
-            $otcAuth = new OneTimeCodeService();
+            $basicAuth = new BasicAuthService();
 
-            $isAuthValid = $otcAuth->isAuthValid($secretAppKey, $oneTimeCode);
+            $isAuthValid = $basicAuth->isAuthValid($authorization, $apiKey);
 
             if (!$isAuthValid) {
                 return $this->errorResponse('S401OAM', 'ERROR', 'Invalid Credentials', 401);

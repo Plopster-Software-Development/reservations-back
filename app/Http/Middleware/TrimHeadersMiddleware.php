@@ -2,16 +2,15 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\Auth\JWTService;
 use App\Traits\ResponseHandler;
+use App\Traits\Utils;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class JWTAuthMiddleware
+class TrimHeadersMiddleware
 {
-
-    use ResponseHandler;
+    use ResponseHandler, Utils;
 
     /**
      * Handle an incoming request.
@@ -21,20 +20,15 @@ class JWTAuthMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            $authorization = $request->header('Authorization');
-            $apiKey = $request->header('x-api-key');
+            $sanitizedHeaders = $this->trimParams($request->headers->all(), ['"', 'Bearer', 'Basic']);
 
-            $jwtAuth = new JWTService();
-
-            $checkToken = $jwtAuth->isAuthValid($authorization, $apiKey);
-
-            if (!$checkToken) {
-                return $this->errorResponse('S401JAM', 'ERROR', 'Invalid JWT', 401);
+            foreach ($sanitizedHeaders as $key => $values) {
+                $request->headers->set($key, $values);
             }
 
             return $next($request);
         } catch (\Throwable $th) {
-            return $this->errorResponse('S500JAM', 'ERROR');
+            return $this->errorResponse('S500THM', 'ERROR');
         }
     }
 }

@@ -68,7 +68,7 @@ class JWTService implements IAuthContract
      *
      * @return bool True if the token is valid and meets the conditions, otherwise false.
      */
-    public function isAuthValid(string $authorization): bool
+    public function isAuthValid(string $authorization, string $apiKey): bool
     {
         try {
             $authorization = trim(str_replace(['"', 'Bearer'], '', $authorization));
