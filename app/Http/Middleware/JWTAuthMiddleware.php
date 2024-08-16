@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Controllers\JWTAuthController;
+use App\Services\Auth\JWTService;
 use App\Traits\ResponseHandler;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthMiddleware
+class JWTAuthMiddleware
 {
 
     use ResponseHandler;
@@ -23,17 +23,17 @@ class AuthMiddleware
         try {
             $authorization = $request->header('Authorization');
 
-            $jwtAuth = new JWTAuthController();
+            $jwtAuth = new JWTService();
 
-            $checkToken = $jwtAuth->checkToken($authorization);
+            $checkToken = $jwtAuth->isAuthValid($authorization);
 
             if (!$checkToken) {
-                return $this->errorResponse('S401AUM', 'ERROR', $checkToken ?? 'Invalid Credentials', 401);
+                return $this->errorResponse('S401JAM', 'ERROR', 'Invalid JWT', 401);
             }
 
             return $next($request);
         } catch (\Throwable $th) {
-            return $this->errorResponse('S500AUM', 'ERROR');
+            return $this->errorResponse('S500JAM', 'ERROR');
         }
     }
 }

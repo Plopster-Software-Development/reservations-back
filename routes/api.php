@@ -1,8 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware(['userJwt', 'appOTC'])->group(function () {
+    Route::get('/', function () {
+        return "Hey with middleware";
+    });
+
+    Route::get('/hey', function () {
+        return "Hey without middleware";
+    })->withoutMiddleware(['userJwt', 'appOTC']);
+});
