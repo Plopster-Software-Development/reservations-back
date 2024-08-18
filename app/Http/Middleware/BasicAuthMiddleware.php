@@ -15,6 +15,8 @@ class BasicAuthMiddleware
     /**
      * Handle an incoming request.
      *
+     * Must be used only on public API endpoints and once a user is authenticated and obtains a JWT this middleware shouldn't be used anymore.
+     *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
