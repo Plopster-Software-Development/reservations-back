@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('api_consumers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('secret');
-            $table->string('api_key');
+            $table->string('name')->unique();
+            $table->string('client_secret')->unique();
+            $table->string('api_key')->unique();
 
             $table->timestamps();
             $table->softDeletes();

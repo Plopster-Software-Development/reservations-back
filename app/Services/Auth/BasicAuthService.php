@@ -53,10 +53,6 @@ class BasicAuthService implements IAuthContract
 
     private function areCredentialsValid(ApiConsumer $model, string $clientSecret, string $apiKey): bool
     {
-        if ($model->api_key !== $apiKey) {
-            throw new \Exception('Invalid API key.');
-        }
-
-        return $this->check($clientSecret, $model->secret);
+        return $this::check($clientSecret, $model->client_secret) && $this::check($apiKey, $model->api_key);
     }
 }

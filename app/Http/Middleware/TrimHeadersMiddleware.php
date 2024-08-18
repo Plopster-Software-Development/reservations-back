@@ -20,7 +20,7 @@ class TrimHeadersMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            $sanitizedHeaders = $this->trimParams($request->headers->all(), ['"', 'Bearer', 'Basic']);
+            $sanitizedHeaders = $this::trimParams($request->headers->all(), ['"', 'Bearer', 'Basic']);
 
             foreach ($sanitizedHeaders as $key => $values) {
                 $request->headers->set($key, $values);

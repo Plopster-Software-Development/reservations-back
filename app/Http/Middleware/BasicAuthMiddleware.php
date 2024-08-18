@@ -28,12 +28,12 @@ class BasicAuthMiddleware
             $isAuthValid = $basicAuth->isAuthValid($authorization, $apiKey);
 
             if (!$isAuthValid) {
-                return $this->errorResponse('S401OAM', 'ERROR', 'Invalid Credentials', 401);
+                return $this->errorResponse('S401BAM', 'ERROR', 'Invalid Credentials', 401);
             }
 
             return $next($request);
         } catch (\Throwable $th) {
-            return $this->errorResponse('S500OAM', 'ERROR');
+            return $this->errorResponse('S500BAM', 'ERROR');
         }
     }
 }

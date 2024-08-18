@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Hash;
 
 trait Utils
 {
-    public function trimParams(array $params, array $elementsToRemove)
+    static function trimParams(array $params, array $elementsToRemove)
     {
         $sanitizedParams = [];
 
@@ -21,7 +21,7 @@ trait Utils
         return $sanitizedParams;
     }
 
-    public function encrypt(string $data)
+    static function encrypt(string $data)
     {
         return Hash::make($data, [
             'rounds' => 12
@@ -36,7 +36,7 @@ trait Utils
      *
      * @return bool True if the plaintext password matches the hashed password, otherwise false.
      */
-    public function check($passText, $hashedPassword)
+    static function check($passText, $hashedPassword)
     {
         return Hash::check($passText, $hashedPassword);
     }

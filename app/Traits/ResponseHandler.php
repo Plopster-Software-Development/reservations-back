@@ -18,7 +18,7 @@ trait ResponseHandler
         string $traceCode,
         string $resultCode = 'SUCCESS',
         string $resultMessage = 'Successful Response',
-        array | null $data = null,
+        mixed $data = null,
         int $httpCode = 200
     ): JsonResponse {
         $finalResponse = [
@@ -45,13 +45,18 @@ trait ResponseHandler
         string $traceCode,
         string $resultCode = 'ERROR',
         string $message = 'An error occurred while processing the request.',
-        int $httpCode = 500
+        int $httpCode = 500,
+        mixed $result = []
     ): JsonResponse {
         $finalResponse = [
             'resultCode' => $resultCode,
             'resultMessage' => $message,
-            'traceCode' => $traceCode
+            'traceCode' => $traceCode,
         ];
+
+        if (isset($result)) {
+            $finalResponse['result'] = $result;
+        }
 
         $response = response()->json($finalResponse, $httpCode);
         $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');

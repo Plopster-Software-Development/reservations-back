@@ -71,7 +71,6 @@ class JWTService implements IAuthContract
     public function isAuthValid(string $authorization, string $apiKey): bool
     {
         try {
-            $authorization = trim(str_replace(['"', 'Bearer'], '', $authorization));
             $decoded = $this->decodeJwtToken($authorization);
 
             if (!$this->isValidToken($decoded)) {
