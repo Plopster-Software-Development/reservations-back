@@ -2,15 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Traits\ResponseHandler;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CreateAPIConsumerRequest extends FormRequest
+class CreateAPIConsumerRequest extends BaseRequest
 {
-
-    use ResponseHandler;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -29,20 +23,5 @@ class CreateAPIConsumerRequest extends FormRequest
         return [
             'name' => 'required|unique:api_consumers'
         ];
-    }
-
-    /**
-     * Handle a failed validation attempt.
-     *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        $errors = $validator->errors();
-
-        throw new HttpResponseException($this->errorResponse('App/Http/Controllers/APIConsumerController::createAPIConsumer', 'App/Http/Controllers/APIConsumerController', null, 'Invalid request parameters.', 'Provided Parameters Where Invalid', 'ERROR', 400, $errors));
     }
 }

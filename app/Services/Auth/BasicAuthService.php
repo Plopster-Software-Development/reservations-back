@@ -20,7 +20,6 @@ class BasicAuthService implements IAuthContract
     {
         try {
             $basicCreds = $this->extractBasicCredentials($authorization);
-
             $model = $this->searchApiConsumer($basicCreds['clientID']);
 
             if (!$this->areCredentialsValid($model, $basicCreds['clientSecret'], $apiKey)) {
@@ -37,7 +36,7 @@ class BasicAuthService implements IAuthContract
     {
         $credentials = base64_decode($authorization);
         $arrCredentials = explode(':', $credentials);
-        return ['clientID' => $arrCredentials[0], 'clientSecret' => $arrCredentials[1]];
+        return [ 'clientID' => $arrCredentials[0], 'clientSecret' => $arrCredentials[1] ];
     }
 
     private function searchApiConsumer(string $clientId): ApiConsumer
