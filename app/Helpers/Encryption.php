@@ -26,7 +26,7 @@ class Encryption
         ]);
 
         if (!$hashedElement) {
-            return $this->errorResponse('S500ENC');
+            return $this->errorResponse(__METHOD__, self::class);
         }
 
         return $hashedElement;

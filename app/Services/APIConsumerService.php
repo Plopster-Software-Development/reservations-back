@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Http\Requests\CreateAPIConsumerRequest;
-use App\Http\Resources\APIConsumerResource;
 use App\Models\ApiConsumer;
 use App\Traits\ResponseHandler;
 use App\Traits\Utils;
@@ -18,19 +17,19 @@ class APIConsumerService
     {
         $insertParams = [
             'client_secret' => hash('sha256', bin2hex(random_bytes(16))),
-            'api_key' => hash('sha256', Str::uuid()->toString() . Carbon::now()->timestamp),
+            'api_key'       => hash('sha256', Str::uuid()->toString() . Carbon::now()->timestamp),
         ];
 
         $consumer = ApiConsumer::create(array_merge($insertParams, $request->validated()));
 
         if (!isset($consumer)) {
-            return $this->errorResponse('S500CAC');
+            return $this->errorResponse(__METHOD__, self::class);
         }
 
-        return $this->successResponse('S200CAC', 'SUCCESS', 'Consumer Successfully Created', [
-            'client_id' => $consumer->id,
+        return $this->successResponse(__METHOD__, self::class, null, 'API Consumer created successfully.', 'API Consumer created successfully.', null, 200, [
+            'client_id'     => $consumer->id,
             'client_secret' => $insertParams['client_secret'],
-            'api_key' => $insertParams['api_key']
+            'api_key'       => $insertParams['api_key']
         ]);
     }
 }

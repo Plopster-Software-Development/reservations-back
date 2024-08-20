@@ -20,7 +20,7 @@ class TrimHeadersMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            $sanitizedHeaders = $this::trimParams($request->headers->all(), ['"', 'Bearer', 'Basic']);
+            $sanitizedHeaders = $this::trimParams($request->headers->all(), [ '"', 'Bearer', 'Basic' ]);
 
             foreach ($sanitizedHeaders as $key => $values) {
                 $request->headers->set($key, $values);
@@ -28,7 +28,7 @@ class TrimHeadersMiddleware
 
             return $next($request);
         } catch (\Throwable $th) {
-            return $this->errorResponse('S500THM', 'ERROR');
+            return $this->errorResponse(__METHOD__, self::class, null, 'An unexpected error just happened, check the trace of the error.');
         }
     }
 }

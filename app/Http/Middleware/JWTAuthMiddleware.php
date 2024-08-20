@@ -29,12 +29,12 @@ class JWTAuthMiddleware
             $checkToken = $jwtAuth->isAuthValid($authorization, $apiKey);
 
             if (!$checkToken) {
-                return $this->errorResponse('S401JAM', 'ERROR', 'Invalid JWT', 401);
+                return $this->errorResponse(__METHOD__, self::class, null, 'Invalid JWT', 'The provided JWT was invalid.', 'ERROR', 401);
             }
 
             return $next($request);
         } catch (\Throwable $th) {
-            return $this->errorResponse('S500JAM', 'ERROR');
+            return $this->errorResponse(__METHOD__, self::class, null, 'An unexpected error just happened, check the trace of the error.');
         }
     }
 }

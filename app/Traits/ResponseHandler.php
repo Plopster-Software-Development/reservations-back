@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Facades\TraceCodeMaker;
 use Illuminate\Http\JsonResponse;
 
 trait ResponseHandler
@@ -15,17 +16,23 @@ trait ResponseHandler
      * @return JsonResponse
      */
     protected function successResponse(
-        string $traceCode,
-        string $resultCode = 'SUCCESS',
-        string $resultMessage = 'Successful Response',
+        ?string $methodName,
+        ?string $className,
+        ?string $service = null,
+        ?string $resultMessage = null,
+        ?string $codeDescription = null,
+        ?string $resultCode = null,
+        int $httpCode = 200,
         mixed $data = null,
-        int $httpCode = 200
     ): JsonResponse {
+
+        $traceCode = TraceCodeMaker::fetchOrCreateTraceCode($service ?? 'API', $httpCode, $methodName, $className, $codeDescription);
+
         $finalResponse = [
-            'resultCode' => $resultCode,
-            'resultMessage' => $resultMessage,
-            'traceCode' => $traceCode,
-            'result' => $data,
+            'resultCode'    => $resultCode ?? 'SUCCESS',
+            'resultMessage' => $resultMessage ?? 'Successful Response',
+            'traceCode'     => $traceCode,
+            'result'        => $data,
         ];
 
         $response = response()->json($finalResponse, $httpCode);
@@ -42,19 +49,25 @@ trait ResponseHandler
      * @return JsonResponse
      */
     protected function errorResponse(
-        string $traceCode,
-        string $resultCode = 'ERROR',
-        string $message = 'An error occurred while processing the request.',
+        ?string $methodName,
+        ?string $className,
+        ?string $service = null,
+        ?string $message = null,
+        ?string $errorDescription = null,
+        ?string $resultCode = null,
         int $httpCode = 500,
-        mixed $result = []
+        mixed $result = [],
     ): JsonResponse {
+
+        $traceCode = TraceCodeMaker::fetchOrCreateTraceCode($service ?? 'API', $httpCode, $methodName, $className, $errorDescription);
+
         $finalResponse = [
-            'resultCode' => $resultCode,
-            'resultMessage' => $message,
-            'traceCode' => $traceCode,
+            'resultCode'    => $resultCode ?? 'ERROR',
+            'resultMessage' => $message ?? 'An error occurred while processing the request.',
+            'traceCode'     => $traceCode['traceCode'] ?? 'Could not get a trace code.',
         ];
 
-        if (isset($result)) {
+        if (isset($result) && !empty($result)) {
             $finalResponse['result'] = $result;
         }
 

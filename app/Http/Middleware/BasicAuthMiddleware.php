@@ -30,12 +30,12 @@ class BasicAuthMiddleware
             $isAuthValid = $basicAuth->isAuthValid($authorization, $apiKey);
 
             if (!$isAuthValid) {
-                return $this->errorResponse('S401BAM', 'ERROR', 'Invalid Credentials', 401);
+                return $this->errorResponse(__METHOD__, self::class, null, 'Invalid Credentials', 'The provided auth keys where invalid', 'ERROR', 401);
             }
 
             return $next($request);
         } catch (\Throwable $th) {
-            return $this->errorResponse('S500BAM', 'ERROR');
+            return $this->errorResponse(__METHOD__, self::class, null, 'An unexpected error just happened, check the trace of the error.', null, 'ERROR', 500);
         }
     }
 }
