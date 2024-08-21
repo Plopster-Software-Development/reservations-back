@@ -31,7 +31,7 @@ trait ResponseHandler
         $finalResponse = [
             'resultCode'    => $resultCode ?? 'SUCCESS',
             'resultMessage' => $resultMessage ?? 'Successful Response',
-            'traceCode'     => $traceCode,
+            'traceCode'     => $traceCode['traceCode'] ?? 'Could not get a trace code.',
             'result'        => $data,
         ];
 

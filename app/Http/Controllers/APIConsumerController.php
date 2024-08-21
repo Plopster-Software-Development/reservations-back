@@ -8,7 +8,9 @@ use App\Services\APIConsumerService;
 
 class APIConsumerController extends Controller
 {
-    public function __construct(private readonly APIConsumerService $apiConsumerService) {}
+    public function __construct(private readonly APIConsumerService $apiConsumerService)
+    {
+    }
 
     public function createAPIConsumer(CreateAPIConsumerRequest $request)
     {

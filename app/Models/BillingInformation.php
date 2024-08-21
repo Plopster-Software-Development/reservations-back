@@ -11,7 +11,6 @@ class BillingInformation extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'restaurant_id',
         'owner_name',
         'owner_lastname',
         'address',
@@ -22,4 +21,9 @@ class BillingInformation extends Model
         'phoneNumber',
         'email'
     ];
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 }

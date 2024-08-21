@@ -15,4 +15,9 @@ class Restaurant extends Model
         'name',
         'kitchen_type'
     ];
+
+    public function billingInformation()
+    {
+        return $this->hasOne(BillingInformation::class);
+    }
 }

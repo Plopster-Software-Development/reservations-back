@@ -20,7 +20,18 @@ class CreateRestaurantRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            //
+            'name'                               => 'required|string',
+            'kitchen_type'                       => 'required|string',
+            'billing_information'                => 'required',
+            'billing_information.owner_name'     => 'required|string',
+            'billing_information.owner_lastname' => 'required|string',
+            'billing_information.address'        => 'required|string',
+            'billing_information.city'           => 'required|string',
+            'billing_information.province'       => 'required|string',
+            'billing_information.country'        => 'required|string',
+            'billing_information.zip_code'       => 'required|string',
+            'billing_information.phoneNumber'    => 'required|string',
+            'billing_information.email'          => 'required|email'
         ];
     }
 }

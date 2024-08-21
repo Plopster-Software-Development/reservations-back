@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\APIConsumerController;
+use App\Http\Controllers\RestaurantController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -14,11 +15,15 @@ Route::group([ 'prefix' => 'consumer' ], function () {
 });
 
 Route::group([ 'prefix' => 'reservation', 'middleware' => [ 'trimHeaders', 'jwtAuth', 'basicAuth' ] ], function () {
-    Route::get('/', function () {
+    Route::get('/jwt', function () {
         return "Hey with JWT Auth Middleware";
     })->withoutMiddleware('basicAuth');
 
-    Route::get('/', function () {
+    Route::get('/basic', function () {
         return "Hey with Basic Auth Middleware";
     })->withoutMiddleware('jwtAuth');
+
+    Route::group([ 'prefix' => 'restaurant' ], function () {
+        Route::post('/', [ RestaurantController::class, 'createRestaurant' ])->name('createRestaurant')->withoutMiddleware([ 'jwtAuth', 'basicAuth' ]);
+    });
 });
