@@ -26,10 +26,12 @@ class APIConsumerService
             return $this->errorResponse(__METHOD__, self::class);
         }
 
-        return $this->successResponse(__METHOD__, self::class, null, 'API Consumer created successfully.', 'API Consumer created successfully.', null, 200, [
+        $data = [
             'client_id'     => $consumer->id,
             'client_secret' => $insertParams['client_secret'],
             'api_key'       => $insertParams['api_key']
-        ]);
+        ];
+
+        return $this->successResponse(__METHOD__, self::class, $data, null, 'API Consumer created successfully.', 'API Consumer created successfully.', null, 200);
     }
 }

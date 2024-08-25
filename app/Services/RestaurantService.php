@@ -23,6 +23,6 @@ class RestaurantService
         $restaurant = Restaurant::create($requestParams);
         $restaurant->billingInformation()->create($billingInformation);
 
-        return $this->successResponse(__METHOD__, self::class, null, 'Restaurant created successfully.', 'Restaurant created successfully.', null, 200, $restaurant);
+        return $this->successResponse(__METHOD__, self::class, $restaurant, null, 'Restaurant created successfully.', 'Restaurant created successfully.', null, 200);
     }
 }

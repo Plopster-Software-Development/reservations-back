@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Reservations extends Model
+class Reservation extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 

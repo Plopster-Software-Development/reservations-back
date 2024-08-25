@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\APIConsumerController;
+use App\Http\Controllers\ReservationsController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\TableController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -12,34 +15,17 @@ Route::group([ 'middleware' => [ 'trimHeaders', 'jwtAuth', 'basicAuth' ] ], func
     })->withoutMiddleware([ 'jwtAuth', 'basicAuth' ]);
 
     Route::group([ 'prefix' => 'consumer' ], function () {
-        Route::post('/', [ APIConsumerController::class, 'createAPIConsumer' ])->name('createAPIConsumer');
+        Route::post('/', [ APIConsumerController::class, 'createAPIConsumer' ]);
     });
 
     Route::group([ 'prefix' => 'restaurant' ], function () {
-        Route::post('/', [ RestaurantController::class, 'createRestaurant' ])->name('createRestaurant')->withoutMiddleware([ 'jwtAuth', 'basicAuth' ]);
+        Route::post('/', [ RestaurantController::class, 'createRestaurant' ])->withoutMiddleware([ 'jwtAuth' ]);
 
-        Route::group([ 'prefix' => 'user' ], function () {
-            Route::post('/', function () {
-                return "Create User";
-            });
+        Route::resource('user/', UserController::class)->withoutMiddleware('basicAuth');
+        Route::post('user/authenticate', [ UserController::class, 'authenticate' ])->withoutMiddleware([ 'jwtAuth' ]);
 
-            Route::get('/{id}', function () {
-                return "Find User";
-            });
-
-            Route::get('/', function () {
-                return "Fetch Users";
-            });
-
-            Route::put('/{id}', function () {
-                return "Update User";
-            });
-
-            Route::delete('/{id}', function () {
-                return "Delete User";
-            });
-        });
-    })->withoutMiddleware([ 'jwtAuth', 'basicAuth' ]);
+        Route::resource('table/', TableController::class)->withoutMiddleware('basicAuth');
+    });
 
     Route::group([ 'prefix' => 'payment' ], function () {
         Route::post('/', function () {
@@ -47,13 +33,6 @@ Route::group([ 'middleware' => [ 'trimHeaders', 'jwtAuth', 'basicAuth' ] ], func
         });
     });
 
-    Route::group([ 'prefix' => 'reservation' ], function () {
-        Route::get('/jwt', function () {
-            return "Hey with JWT Auth Middleware";
-        })->withoutMiddleware('basicAuth');
+    Route::resource('reservation/', ReservationsController::class)->withoutMiddleware('basicAuth');
 
-        Route::get('/basic', function () {
-            return "Hey with Basic Auth Middleware";
-        })->withoutMiddleware('jwtAuth');
-    });
 });

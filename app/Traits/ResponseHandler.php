@@ -18,12 +18,12 @@ trait ResponseHandler
     protected function successResponse(
         ?string $methodName,
         ?string $className,
+        mixed $data = null,
         ?string $service = null,
         ?string $resultMessage = null,
         ?string $codeDescription = null,
         ?string $resultCode = null,
         int $httpCode = 200,
-        mixed $data = null,
     ): JsonResponse {
 
         $traceCode = TraceCodeMaker::fetchOrCreateTraceCode($service ?? 'API', $httpCode, $methodName, $className, $codeDescription);
