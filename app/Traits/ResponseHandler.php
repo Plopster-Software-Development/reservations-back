@@ -3,7 +3,7 @@
 namespace App\Traits;
 
 use App\Facades\TraceCodeMaker;
-use Illuminate\Http\JsonResponse;
+use App\Http\Resources\ApiResponseResource;
 
 trait ResponseHandler
 {
@@ -13,67 +13,30 @@ trait ResponseHandler
      * @param mixed $data
      * @param string $message
      * @param int $statusCode
-     * @return JsonResponse
+     * @return ApiResponseResource 
      */
-    protected function successResponse(
-        ?string $methodName,
-        ?string $className,
-        mixed $data = null,
-        ?string $service = null,
+    protected function response(
+        int $httpCode,
+        string $methodName,
+        string $className,
+        ?string $service = 'API',
         ?string $resultMessage = null,
         ?string $codeDescription = null,
         ?string $resultCode = null,
-        int $httpCode = 200,
-    ): JsonResponse {
+        mixed $data = null,
+    ): ApiResponseResource {
+        $traceCode = TraceCodeMaker::fetchOrCreateTraceCode($service, $httpCode, $methodName, $className, $codeDescription);
 
-        $traceCode = TraceCodeMaker::fetchOrCreateTraceCode($service ?? 'API', $httpCode, $methodName, $className, $codeDescription);
+        $resultCode ??= $httpCode < 299 ? 'SUCCESS' : 'ERROR';
 
-        $finalResponse = [
-            'resultCode'    => $resultCode ?? 'SUCCESS',
-            'resultMessage' => $resultMessage ?? 'Successful Response',
-            'traceCode'     => $traceCode['traceCode'] ?? 'Could not get a trace code.',
+        return new ApiResponseResource((object) [
+            'resultCode'    => $resultCode,
+            'resultMessage' => $resultMessage,
+            'traceCode'     => $traceCode['traceCode'],
             'result'        => $data,
-        ];
-
-        $response = response()->json($finalResponse, $httpCode);
-        $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-
-        return $response;
-    }
-
-    /**
-     * Error base response
-     *
-     * @param string $message
-     * @param int $statusCode
-     * @return JsonResponse
-     */
-    protected function errorResponse(
-        ?string $methodName,
-        ?string $className,
-        ?string $service = null,
-        ?string $message = null,
-        ?string $errorDescription = null,
-        ?string $resultCode = null,
-        int $httpCode = 500,
-        mixed $result = [],
-    ): JsonResponse {
-
-        $traceCode = TraceCodeMaker::fetchOrCreateTraceCode($service ?? 'API', $httpCode, $methodName, $className, $errorDescription);
-
-        $finalResponse = [
-            'resultCode'    => $resultCode ?? 'ERROR',
-            'resultMessage' => $message ?? 'An error occurred while processing the request.',
-            'traceCode'     => $traceCode['traceCode'] ?? 'Could not get a trace code.',
-        ];
-
-        if (isset($result) && !empty($result)) {
-            $finalResponse['result'] = $result;
-        }
-
-        $response = response()->json($finalResponse, $httpCode);
-        $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-
-        return $response;
+            'httpCode'      => $httpCode
+        ]);
+        // ()->response()->setStatusCode($httpCode)
+        //     ->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
 }

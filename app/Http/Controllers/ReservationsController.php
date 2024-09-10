@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
+use App\Http\Resources\ApiResponseResource;
 use App\Services\ReservationService;
-use Illuminate\Http\Request;
 
 class ReservationsController extends Controller
 {
@@ -13,38 +13,39 @@ class ReservationsController extends Controller
     {
     }
 
-    public function index()
+    public function index(): ApiResponseResource
     {
         $reservations = $this->reservationService->getAll(10);
 
-        return $this->successResponse(__METHOD__, self::class, $reservations);
+        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $reservations);
+
     }
 
-    public function show(string $id)
+    public function show(string $id): ApiResponseResource
     {
         $reservation = $this->reservationService->getById($id);
 
-        return $this->successResponse(__METHOD__, self::class, $reservation);
+        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $reservation);
     }
 
-    public function store(CreateReservationRequest $request)
+    public function store(CreateReservationRequest $request): ApiResponseResource
     {
         $reservation = $this->reservationService->create($request->all());
 
-        return $this->successResponse(__METHOD__, self::class, $reservation);
+        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $reservation);
     }
 
-    public function update(UpdateReservationRequest $request, string $id)
+    public function update(UpdateReservationRequest $request, string $id): ApiResponseResource
     {
         $reservation = $this->reservationService->update($id, $request->validated());
 
-        return $this->successResponse(__METHOD__, self::class, $reservation);
+        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $reservation);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): ApiResponseResource
     {
-        $reservation = $this->reservationService->delete($id);
+        $reservation = $this->reservationService->delete(id: $id);
 
-        return $this->successResponse(__METHOD__, self::class, $reservation);
+        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $reservation);
     }
 }

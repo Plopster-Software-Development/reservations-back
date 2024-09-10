@@ -24,17 +24,24 @@ class JWTAuthMiddleware
             $authorization = $request->header('Authorization');
             $apiKey = $request->header('x-api-key');
 
+            if (!$authorization || !$apiKey) {
+                throw new \InvalidArgumentException('Authentication headers are required.', 401);
+            }
+
+
             $jwtAuth = new JWTService();
 
             $checkToken = $jwtAuth->isAuthValid($authorization, $apiKey);
 
             if (!$checkToken) {
-                return $this->errorResponse(__METHOD__, self::class, null, 'Invalid JWT', 'The provided JWT was invalid.', 'ERROR', 401);
+                throw new \InvalidArgumentException('Provided credentials are invalid.', 401);
             }
 
             return $next($request);
+        } catch (\InvalidArgumentException $th) {
+            return $this->response(httpCode: $th->getCode() ?? 401, methodName: __METHOD__, className: self::class, resultMessage: $th->getMessage());
         } catch (\Throwable $th) {
-            return $this->errorResponse(__METHOD__, self::class, null, 'An unexpected error just happened, check the trace of the error.');
+            return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: 'An unexpected error just happened, check the trace of the error.');
         }
     }
 }

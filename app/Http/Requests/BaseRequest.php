@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Traits\ResponseHandler;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Exceptions\CustomHttpResponseException;
 
 class BaseRequest extends FormRequest
 {
@@ -24,6 +24,6 @@ class BaseRequest extends FormRequest
     {
         $errors = $validator->errors();
 
-        throw new HttpResponseException($this->errorResponse('App/Http/Controllers/RestaurantController::createRestaurant', 'App/Http/Controllers/RestaurantController', null, 'Invalid request parameters.', 'Provided Parameters Where Invalid', 'ERROR', 400, $errors));
+        throw new CustomHttpResponseException($this->response(httpCode: 400, methodName: __METHOD__, className: self::class, resultMessage: 'Provided parameters are invalid.', data: $errors));
     }
 }

@@ -25,17 +25,24 @@ class BasicAuthMiddleware
             $authorization = $request->header('Authorization');
             $apiKey = $request->header('x-api-key');
 
+            if (!$authorization || !$apiKey) {
+                throw new \InvalidArgumentException('Authentication headers are required.', 401);
+            }
+
             $basicAuth = new BasicAuthService();
 
             $isAuthValid = $basicAuth->isAuthValid($authorization, $apiKey);
 
             if (!$isAuthValid) {
-                return $this->errorResponse(__METHOD__, self::class, null, 'Invalid Credentials', 'The provided auth keys where invalid', 'ERROR', 401);
+                throw new \InvalidArgumentException('Provided credentials are invalid.', 401);
             }
 
             return $next($request);
+        } catch (\InvalidArgumentException $th) {
+            return $this->response(httpCode: $th->getCode() ?? 401, methodName: __METHOD__, className: self::class, resultMessage: $th->getMessage());
         } catch (\Throwable $th) {
-            return $this->errorResponse(__METHOD__, self::class, null, 'An unexpected error just happened, check the trace of the error.', null, 'ERROR', 500);
+            return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: 'An unexpected error just happened, check the trace of the error.');
+
         }
     }
 }

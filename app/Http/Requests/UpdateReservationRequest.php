@@ -22,7 +22,8 @@ class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "test"   => 'required',
+            "status" => 'required|in:pending,approved,rejected',
         ];
     }
 }

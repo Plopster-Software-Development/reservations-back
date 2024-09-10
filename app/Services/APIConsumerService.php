@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Requests\CreateAPIConsumerRequest;
+use App\Http\Resources\ApiResponseResource;
 use App\Models\ApiConsumer;
 use App\Traits\ResponseHandler;
 use App\Traits\Utils;
@@ -13,7 +14,7 @@ class APIConsumerService
 {
     use ResponseHandler, Utils;
 
-    public function createAPIConsumer(CreateAPIConsumerRequest $request)
+    public function createAPIConsumer(CreateAPIConsumerRequest $request): ApiResponseResource
     {
         $insertParams = [
             'client_secret' => hash('sha256', bin2hex(random_bytes(16))),
@@ -23,7 +24,7 @@ class APIConsumerService
         $consumer = ApiConsumer::create(array_merge($insertParams, $request->validated()));
 
         if (!isset($consumer)) {
-            return $this->errorResponse(__METHOD__, self::class);
+            return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: 'Consumer could not be created.');
         }
 
         $data = [
@@ -32,6 +33,6 @@ class APIConsumerService
             'api_key'       => $insertParams['api_key']
         ];
 
-        return $this->successResponse(__METHOD__, self::class, $data, null, 'API Consumer created successfully.', 'API Consumer created successfully.', null, 200);
+        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $data, resultMessage: 'API Consumer created successfully.');
     }
 }

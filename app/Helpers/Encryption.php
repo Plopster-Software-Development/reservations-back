@@ -26,7 +26,7 @@ class Encryption
         ]);
 
         if (!$hashedElement) {
-            return $this->errorResponse(__METHOD__, self::class);
+            return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class);
         }
 
         return $hashedElement;

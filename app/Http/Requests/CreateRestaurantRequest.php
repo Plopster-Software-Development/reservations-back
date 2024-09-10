@@ -21,7 +21,6 @@ class CreateRestaurantRequest extends BaseRequest
     {
         return [
             'name'                               => 'required|string',
-            'kitchen_type'                       => 'required|string',
             'billing_information'                => 'required',
             'billing_information.owner_name'     => 'required|string',
             'billing_information.owner_lastname' => 'required|string',

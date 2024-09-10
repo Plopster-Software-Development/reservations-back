@@ -7,7 +7,6 @@ use App\Traits\ResponseHandler;
 use Illuminate\Support\Facades\Storage;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use App\Helpers\Encryption;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use stdClass;
@@ -44,11 +43,11 @@ class JWTService implements IAuthContract
             $expirationTime = Carbon::now()->add(env('JWT_VALIDITY_TIME'), env('TYPE_TIME'))->timestamp;
 
             $data = [
-                'iss' => env('ENV_DOMAIN_NAME') . $issPath,
-                'sub' => $userId,
+                'iss'   => env('ENV_DOMAIN_NAME') . $issPath,
+                'sub'   => $userId,
                 'roles' => $roles,
-                'iat' => $issuedAt,
-                'exp' => $expirationTime
+                'iat'   => $issuedAt,
+                'exp'   => $expirationTime
             ];
 
             if (isset($extraParams)) {
@@ -103,7 +102,7 @@ class JWTService implements IAuthContract
      *
      * @return bool True if the token is valid for merchant authentication, otherwise false.
      */
-    private function isValidToken(Object $decoded): bool
+    private function isValidToken(object $decoded): bool
     {
         return is_object($decoded); //&& isset($obj->prop)
     }

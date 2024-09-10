@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAPIConsumerRequest;
+use App\Http\Resources\ApiResponseResource;
 use App\Services\APIConsumerService;
-
 
 class APIConsumerController extends Controller
 {
@@ -12,7 +12,7 @@ class APIConsumerController extends Controller
     {
     }
 
-    public function createAPIConsumer(CreateAPIConsumerRequest $request)
+    public function createAPIConsumer(CreateAPIConsumerRequest $request): ApiResponseResource
     {
         return $this->apiConsumerService->createAPIConsumer($request);
     }

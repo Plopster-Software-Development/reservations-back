@@ -28,7 +28,7 @@ class TrimHeadersMiddleware
 
             return $next($request);
         } catch (\Throwable $th) {
-            return $this->errorResponse(__METHOD__, self::class, null, 'An unexpected error just happened, check the trace of the error.');
+            return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: 'An unexpected error just happened, check the trace of the error.');
         }
     }
 }
