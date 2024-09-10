@@ -13,11 +13,15 @@ class Restaurant extends Model
 
     protected $fillable = [
         'name',
-        'kitchen_type'
     ];
 
     public function billingInformation()
     {
         return $this->hasOne(BillingInformation::class);
+    }
+
+    public function user()
+    {
+        return $this->hasMany(User::class);
     }
 }

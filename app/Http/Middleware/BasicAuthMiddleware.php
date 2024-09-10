@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\ApiResponseResource;
 use App\Services\Auth\BasicAuthService;
 use App\Traits\ResponseHandler;
 use Closure;
@@ -19,7 +20,7 @@ class BasicAuthMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next): Response|ApiResponseResource
     {
         try {
             $authorization = $request->header('Authorization');
@@ -31,7 +32,7 @@ class BasicAuthMiddleware
 
             $basicAuth = new BasicAuthService();
 
-            $isAuthValid = $basicAuth->isAuthValid($authorization, $apiKey);
+            $isAuthValid = $basicAuth->isAuthValid($authorization, apiKey: $apiKey);
 
             if (!$isAuthValid) {
                 throw new \InvalidArgumentException('Provided credentials are invalid.', 401);
@@ -42,7 +43,6 @@ class BasicAuthMiddleware
             return $this->response(httpCode: $th->getCode() ?? 401, methodName: __METHOD__, className: self::class, resultMessage: $th->getMessage());
         } catch (\Throwable $th) {
             return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: 'An unexpected error just happened, check the trace of the error.');
-
         }
     }
 }

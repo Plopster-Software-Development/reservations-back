@@ -15,7 +15,7 @@ Route::get('/', function () {
 });
 
 Route::middleware([ JWTAuthMiddleware::class, BasicAuthMiddleware::class])->group(function () {
-    Route::post('consumer/', action: [ APIConsumerController::class, 'createAPIConsumer' ]);
+    Route::post(uri: 'consumer/', action: [ APIConsumerController::class, 'createAPIConsumer' ]);
 
     Route::group([ 'prefix' => 'restaurant' ], function () {
         Route::withoutMiddleware([ JWTAuthMiddleware::class])->group(function () {
@@ -49,14 +49,6 @@ Route::middleware([ JWTAuthMiddleware::class, BasicAuthMiddleware::class])->grou
 
     });
 });
-
-
-
-
-
-
-
-
 
 Route::group([ 'prefix' => 'payment' ], function () {
     Route::post('/', function () {

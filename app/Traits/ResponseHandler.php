@@ -21,11 +21,12 @@ trait ResponseHandler
         string $className,
         ?string $service = 'API',
         ?string $resultMessage = null,
-        ?string $codeDescription = null,
         ?string $resultCode = null,
         mixed $data = null,
     ): ApiResponseResource {
-        $traceCode = TraceCodeMaker::fetchOrCreateTraceCode($service, $httpCode, $methodName, $className, $codeDescription);
+        $traceCode = TraceCodeMaker::fetchOrCreateTraceCode($service, $httpCode, $methodName, $className, $resultMessage);
+
+        $resultMessage ??= $httpCode < 299 ? 'Successful Response.' : 'An Error Occurred.';
 
         $resultCode ??= $httpCode < 299 ? 'SUCCESS' : 'ERROR';
 

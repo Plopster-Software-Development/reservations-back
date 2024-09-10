@@ -23,4 +23,14 @@ class ApiResponseResource extends JsonResource
             'result'        => $this->when($this->result !== null, $this->result),
         ];
     }
+
+    public function withResponse($request, $response)
+    {
+        // Establece el código HTTP en la cabecera
+        $httpCode = $this->httpCode;
+        $response->setStatusCode($httpCode);
+
+        // Agregar otras cabeceras si es necesario
+        $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
 }

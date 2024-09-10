@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\ApiResponseResource;
 use App\Traits\ResponseHandler;
 use App\Traits\Utils;
 use Closure;
@@ -17,7 +18,7 @@ class TrimHeadersMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next): Response|ApiResponseResource
     {
         try {
             $sanitizedHeaders = $this::trimParams($request->headers->all(), [ '"', 'Bearer', 'Basic' ]);

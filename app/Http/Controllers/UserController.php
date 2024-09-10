@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthenticateUserRequest;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\ApiResponseResource;
 use App\Services\UserService;
 
 class UserController extends Controller
@@ -22,30 +23,22 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $user = $this->userService->getById($id);
-
-        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $user);
+        return $this->userService->getById($id);
     }
 
-    public function store(CreateUserRequest $request)
+    public function store(CreateUserRequest $request): ApiResponseResource
     {
-        $user = $this->userService->create($request->all());
-
-        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $user);
+        return $this->userService->create($request->validated());
     }
 
-    public function update(UpdateUserRequest $request, string $id)
+    public function update(UpdateUserRequest $request, string $id): ApiResponseResource
     {
-        $user = $this->userService->update($id, $request->validated());
-
-        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $user);
+        return $this->userService->update($id, $request->validated());
     }
 
     public function destroy(string $id)
     {
-        $user = $this->userService->delete($id);
-
-        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $user);
+        return $this->userService->delete($id);
     }
 
     public function authenticate(AuthenticateUserRequest $request)

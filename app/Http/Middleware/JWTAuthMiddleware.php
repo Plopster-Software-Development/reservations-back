@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\ApiResponseResource;
 use App\Services\Auth\JWTService;
 use App\Traits\ResponseHandler;
 use Closure;
@@ -18,7 +19,7 @@ class JWTAuthMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next): Response|ApiResponseResource
     {
         try {
             $authorization = $request->header('Authorization');

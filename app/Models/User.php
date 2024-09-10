@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,17 +51,17 @@ class User extends Authenticatable implements MustVerifyEmailContract
         ];
     }
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_user');
     }
 
-    public function hasRole($role)
+    public function hasRole($role): bool
     {
         return $this->roles()->where('name', $role)->exists();
     }
 
-    public function hasPermission($permission)
+    public function hasPermission($permission): bool
     {
         foreach ($this->roles as $role) {
             if ($role->hasPermission($permission)) {
@@ -67,5 +69,10 @@ class User extends Authenticatable implements MustVerifyEmailContract
             }
         }
         return false;
+    }
+
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
     }
 }
