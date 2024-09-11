@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\ApiResponseResource;
 use App\Services\UserService;
 
-class UserController extends Controller
+class UsersController extends Controller
 {
     public function __construct(private readonly UserService $userService)
     {
@@ -43,11 +43,10 @@ class UserController extends Controller
 
     public function authenticate(AuthenticateUserRequest $request)
     {
-        $jwt = $this->userService->authenticate($request->validated());
+        $jwt = $this->userService->authenticate($request->all());
 
         if (!$jwt) {
             return $this->response(httpCode: 401, methodName: __METHOD__, className: self::class, resultMessage: 'Invalid Auth Credentials');
-
         }
 
         return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $jwt);

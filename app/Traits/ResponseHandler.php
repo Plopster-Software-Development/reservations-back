@@ -37,7 +37,5 @@ trait ResponseHandler
             'result'        => $data,
             'httpCode'      => $httpCode
         ]);
-        // ()->response()->setStatusCode($httpCode)
-        //     ->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
 }

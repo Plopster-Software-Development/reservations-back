@@ -2,29 +2,31 @@
 
 namespace App\Services\Auth;
 
+use App\Models\ApiConsumer;
 use App\Services\Contracts\IAuthContract;
 use App\Traits\ResponseHandler;
+use App\Traits\Utils;
 use Illuminate\Support\Facades\Storage;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use stdClass;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
+use UnexpectedValueException;
 
 class JWTService implements IAuthContract
 {
-    use ResponseHandler;
+    use ResponseHandler, Utils;
 
     protected $publicKey;
-    protected $privateKey;
     protected $response;
     protected $dbTransactions;
 
     public function __construct()
     {
-        $this->publicKey = Storage::disk('secPub')->get(env('PUBLIC_AUTH_KEY_PATH'));
-        $this->privateKey = Storage::disk('secPriv')->get(env('PRIVATE_AUTH_KEY_PATH'));
+        $this->publicKey = Storage::disk('auth')->get(env('PUBLIC_AUTH_KEY_PATH'));
     }
 
     /**
@@ -36,29 +38,45 @@ class JWTService implements IAuthContract
      *
      * @return string returns the JWT
      */
-    public function generateToken(string $userId, string $issPath = '/', array $roles = [], array $extraParams = []): string
+    public static function generateToken(string $userId, string $consumerId, string $issPath = '/', array $roles = [], ?array $extraParams = null): array
     {
         try {
-            $issuedAt = Carbon::now()->timestamp;
-            $expirationTime = Carbon::now()->add(env('JWT_VALIDITY_TIME'), env('TYPE_TIME'))->timestamp;
+            $currentTime = Carbon::now();
+            $expirationTime = $currentTime->copy()->add(
+                unit: env('JWT_TYPE_TIME', 'minutes'),
+                value: (int) env('JWT_VALIDITY_TIME', 60)
+            );
 
             $data = [
-                'iss'   => env('ENV_DOMAIN_NAME') . $issPath,
-                'sub'   => $userId,
-                'roles' => $roles,
-                'iat'   => $issuedAt,
-                'exp'   => $expirationTime
+                'iss'          => env('ENV_DOMAIN_NAME') . $issPath,
+                'sub'          => $userId,
+                'consumer_sub' => $consumerId,
+                'roles'        => $roles,
+                'iat'          => $currentTime->timestamp,
+                'exp'          => $expirationTime->timestamp
             ];
 
-            if (isset($extraParams)) {
+            if ($extraParams) {
                 $data['data'] = Crypt::encrypt(json_encode($extraParams, JSON_UNESCAPED_SLASHES));
             }
 
-            return JWT::encode($data, $this->privateKey, 'RS256');
+            $privateKey = Storage::disk('auth')->get(env('PRIVATE_AUTH_KEY_PATH'));
+
+            $jwt = JWT::encode($data, $privateKey, 'RS256');
+
+            $expirationDurationInSeconds = $currentTime->diffInSeconds($expirationTime);
+
+            return [
+                'token_type'      => 'Bearer',
+                'expiration_time' => (string) $expirationDurationInSeconds,
+                'access_token'    => $jwt,
+            ];
         } catch (\Throwable $e) {
-            throw new InternalErrorException($e->getMessage());
+            Log::error('Error generating token: ' . $e->getMessage());
+            throw new InternalErrorException('Error generating token. Please try again later.');
         }
     }
+
 
     /**
      * Validates and checks the provided JWT token against specified conditions.
@@ -72,14 +90,17 @@ class JWTService implements IAuthContract
         try {
             $decoded = $this->decodeJwtToken($authorization);
 
-            if (!$this->isValidToken($decoded)) {
+            $model = $this->searchApiConsumer($decoded->consumer_sub);
+
+            if (!$this->isValidToken($decoded) || !$this->areCredentialsValid($model, $apiKey)) {
                 return false;
             }
 
             return true;
-        } catch (\Throwable $e) {
-            //todo: catch all exceptions and log it.
+        } catch (UnexpectedValueException $e) {
             return false;
+        } catch (\Throwable $e) {
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -104,6 +125,23 @@ class JWTService implements IAuthContract
      */
     private function isValidToken(object $decoded): bool
     {
-        return is_object($decoded); //&& isset($obj->prop)
+        return is_object($decoded) && isset($decoded->iss) && isset($decoded->sub)
+            && isset($decoded->roles) && isset($decoded->iat) && isset($decoded->exp);
+    }
+
+    private function searchApiConsumer(string $clientId): ApiConsumer
+    {
+        $apiConsumer = ApiConsumer::where('id', $clientId)->firstOrFail();
+
+        if (!$apiConsumer) {
+            throw new \Exception('Invalid API consumer.');
+        }
+
+        return $apiConsumer;
+    }
+
+    private function areCredentialsValid(ApiConsumer $model, string $apiKey): bool
+    {
+        return $this::check($apiKey, $model->api_key);
     }
 }

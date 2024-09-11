@@ -34,9 +34,11 @@ class BasicAuthMiddleware
 
             $isAuthValid = $basicAuth->isAuthValid($authorization, apiKey: $apiKey);
 
-            if (!$isAuthValid) {
+            if ($isAuthValid['error']) {
                 throw new \InvalidArgumentException('Provided credentials are invalid.', 401);
             }
+
+            $request->merge([ 'consumer_id' => $isAuthValid['clientId'] ]);
 
             return $next($request);
         } catch (\InvalidArgumentException $th) {

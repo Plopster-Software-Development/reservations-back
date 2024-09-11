@@ -12,7 +12,7 @@ class CreateUserRequest extends BaseRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,7 +26,7 @@ class CreateUserRequest extends BaseRequest
             'restaurant_id' => 'required|uuid|exists:restaurants,id',
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users|confirmed',
-            'phoneNumber'   => 'required|string|max:20',
+            'phoneNumber'   => 'required|string|unique:users|max:20',
             'password'      => [
                 'required',
                 'string',

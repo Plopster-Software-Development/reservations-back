@@ -3,7 +3,7 @@
 use App\Http\Controllers\APIConsumerController;
 use App\Http\Controllers\ReservationsController;
 use App\Http\Controllers\RestaurantController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsersController;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\JWTAuthMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -14,21 +14,24 @@ Route::get('/', function () {
     return "Hello world, today is " . $dateTime[0]->current_timestamp;
 });
 
+//TODO: 1. Crear mesas, 2. Gestionar reservas (todo, incluido notificacion de reservas), 3. Finalizar gestion de restaurantes y usuarios, 4. Gestion de roles(ruta y controlador), 5. Simulacion de pagos.
+
+Route::post(uri: 'consumer/', action: [ APIConsumerController::class, 'createAPIConsumer' ]);
+
 Route::middleware([ JWTAuthMiddleware::class, BasicAuthMiddleware::class])->group(function () {
-    Route::post(uri: 'consumer/', action: [ APIConsumerController::class, 'createAPIConsumer' ]);
 
     Route::group([ 'prefix' => 'restaurant' ], function () {
         Route::withoutMiddleware([ JWTAuthMiddleware::class])->group(function () {
             Route::post('/', action: [ RestaurantController::class, 'store' ]);
-            Route::post('user/authenticate', action: [ UserController::class, 'authenticate' ]);
+            Route::post('user/authenticate', action: [ UsersController::class, 'authenticate' ]);
         });
 
         Route::withoutMiddleware([ BasicAuthMiddleware::class])->group(function () {
-            Route::get('user/', [ UserController::class, 'index' ]);
-            Route::get('user/{id}', [ UserController::class, 'show' ]);
-            Route::post('user/', [ UserController::class, 'store' ]);
-            Route::put('user/{id}', [ UserController::class, 'update' ]);
-            Route::delete('user/{id}', [ UserController::class, 'destroy' ]);
+            Route::get('user/', [ UsersController::class, 'index' ]);
+            Route::get('user/{id}', [ UsersController::class, 'show' ]);
+            Route::post('user/', action: [ UsersController::class, 'store' ]);
+            Route::put('user/{id}', [ UsersController::class, 'update' ]);
+            Route::delete('user/{id}', [ UsersController::class, 'destroy' ]);
 
             Route::get('/', [ RestaurantController::class, 'index' ]);
             Route::get('/{id}', [ RestaurantController::class, 'show' ]);

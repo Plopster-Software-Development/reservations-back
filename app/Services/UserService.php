@@ -58,6 +58,8 @@ class UserService implements IStandardContract
                 throw new Error('User could not be created.');
             }
 
+            $user->load('restaurant');
+
             return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $user);
         } catch (\Throwable $th) {
             return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: $th->getMessage());
@@ -94,18 +96,20 @@ class UserService implements IStandardContract
         }
     }
 
-    public function authenticate(array $data): bool|string
+    public function authenticate(array $data): bool|array
     {
-        $user = User::where('email', $data['email'])->first();
+        $user = User::with('roles')->where('email', '=', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return false;
         }
 
-        $roles = $user->roles();
+        $roles = [];
 
-        $jwtService = new JWTService();
+        foreach ($user->roles as $role) {
+            $roles[] = strtolower($role->name);
+        }
 
-        return $jwtService->generateToken($user->id, '/', $roles);
+        return JWTService::generateToken($user->id, $data['consumer_id'], '/', $roles);
     }
 }

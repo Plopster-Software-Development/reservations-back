@@ -16,19 +16,26 @@ class BasicAuthService implements IAuthContract
 {
     use Utils;
 
-    public function isAuthValid(string $authorization, string $apiKey): bool
+    public function isAuthValid(string $authorization, string $apiKey): array
     {
         try {
             $basicCreds = $this->extractBasicCredentials($authorization);
             $model = $this->searchApiConsumer($basicCreds['clientID']);
 
             if (!$this->areCredentialsValid($model, $basicCreds['clientSecret'], $apiKey)) {
-                return false;
+                return [
+                    'error' => true,
+                ];
             }
 
-            return true;
+            return [
+                'error'    => false,
+                'clientId' => $basicCreds['clientID']
+            ];
         } catch (\Throwable $th) {
-            return false;
+            return [
+                'error' => true,
+            ];
         }
     }
 
