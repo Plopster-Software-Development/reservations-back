@@ -12,9 +12,8 @@ class RestaurantService
 {
     use ResponseHandler, Utils;
 
-    public function createRestaurant(CreateRestaurantRequest $request): ApiResponseResource
+    public function createRestaurant(array $requestParams): ApiResponseResource
     {
-        $requestParams = $request->validated();
         $billingInformation = $requestParams['billing_information'];
 
         unset($requestParams['billing_information']);

@@ -14,14 +14,14 @@ class APIConsumerService
 {
     use ResponseHandler, Utils;
 
-    public function createAPIConsumer(CreateAPIConsumerRequest $request): ApiResponseResource
+    public function createAPIConsumer(array $request): ApiResponseResource
     {
         $insertParams = [
             'client_secret' => hash('sha256', bin2hex(random_bytes(16))),
             'api_key'       => hash('sha256', Str::uuid()->toString() . Carbon::now()->timestamp),
         ];
 
-        $consumer = ApiConsumer::create(array_merge($insertParams, $request->validated()));
+        $consumer = ApiConsumer::create(array_merge($insertParams, $request));
 
         if (!isset($consumer)) {
             return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: 'Consumer could not be created.');

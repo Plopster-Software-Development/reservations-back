@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateReservationRequest;
-use App\Http\Requests\UpdateReservationRequest;
+use App\Http\Requests\Reservation\CreateReservationRequest;
+use App\Http\Requests\Reservation\UpdateReservationRequest;
 use App\Http\Resources\ApiResponseResource;
 use App\Services\ReservationService;
 

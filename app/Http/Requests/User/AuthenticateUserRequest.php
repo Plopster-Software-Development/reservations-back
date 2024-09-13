@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\User;
 
+use App\Http\Requests\BaseRequest;
 
-class CreateAPIConsumerRequest extends BaseRequest
+class AuthenticateUserRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,7 +22,8 @@ class CreateAPIConsumerRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:api_consumers'
+            'email'    => 'required|email',
+            'password' => 'required|string|min:8',
         ];
     }
 }

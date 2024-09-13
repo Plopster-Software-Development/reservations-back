@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\APIConsumer;
+use App\Http\Requests\BaseRequest;
 
-use Illuminate\Foundation\Http\FormRequest;
 
-class CreateReservationRequest extends FormRequest
+class CreateAPIConsumerRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class CreateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|unique:api_consumers'
         ];
     }
 }

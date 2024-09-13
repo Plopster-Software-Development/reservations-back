@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Table;
 
+use App\Http\Requests\BaseRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateReservationRequest extends FormRequest
+class CreateTableRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +23,7 @@ class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "test"   => 'required',
-            "status" => 'required|in:pending,approved,rejected',
+            //
         ];
     }
 }

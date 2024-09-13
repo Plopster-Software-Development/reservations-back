@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Restaurant;
+
+use App\Http\Requests\BaseRequest;
 
 class CreateRestaurantRequest extends BaseRequest
 {

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateRestaurantRequest;
+use App\Http\Requests\Restaurant\CreateRestaurantRequest;
 use App\Services\RestaurantService;
 use App\Http\Resources\ApiResponseResource;
 
@@ -23,6 +23,6 @@ class RestaurantController extends Controller
      */
     public function store(CreateRestaurantRequest $request): ApiResponseResource
     {
-        return $this->restaurantService->createRestaurant(request: $request);
+        return $this->restaurantService->createRestaurant($request->validated());
     }
 }
