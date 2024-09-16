@@ -38,7 +38,7 @@ class JWTService implements IAuthContract
      *
      * @return string returns the JWT
      */
-    public static function generateToken(string $userId, string $consumerId, string $issPath = '/', array $roles = [], ?array $extraParams = null): array
+    public static function generateToken(string $userId, string $consumerId, string $restaurant_id, string $issPath = '/', array $roles = [], ?array $extraParams = null): array
     {
         try {
             $currentTime = Carbon::now();
@@ -48,12 +48,13 @@ class JWTService implements IAuthContract
             );
 
             $data = [
-                'iss'          => env('ENV_DOMAIN_NAME') . $issPath,
-                'sub'          => $userId,
-                'consumer_sub' => $consumerId,
-                'roles'        => $roles,
-                'iat'          => $currentTime->timestamp,
-                'exp'          => $expirationTime->timestamp
+                'iss'            => env('ENV_DOMAIN_NAME') . $issPath,
+                'sub'            => $userId,
+                'consumer_sub'   => $consumerId,
+                'restaurant_sub' => $restaurant_id,
+                'roles'          => $roles,
+                'iat'            => $currentTime->timestamp,
+                'exp'            => $expirationTime->timestamp
             ];
 
             if ($extraParams) {
@@ -85,20 +86,27 @@ class JWTService implements IAuthContract
      *
      * @return bool True if the token is valid and meets the conditions, otherwise false.
      */
-    public function isAuthValid(string $authorization, string $apiKey): bool
+    public function isAuthValid(string $authorization, string $apiKey): array
     {
         try {
             $decoded = $this->decodeJwtToken($authorization);
 
-            $model = $this->searchApiConsumer($decoded->consumer_sub);
+            $model = $this->searchApiConsumer(clientId: $decoded->consumer_sub);
 
             if (!$this->isValidToken($decoded) || !$this->areCredentialsValid($model, $apiKey)) {
-                return false;
+                return [
+                    'error' => true,
+                ];
             }
 
-            return true;
+            return [
+                'error'         => false,
+                'restaurant_id' => $decoded->restaurant_sub
+            ];
         } catch (UnexpectedValueException $e) {
-            return false;
+            return [
+                'error' => true,
+            ];
         } catch (\Throwable $e) {
             throw new \Exception($e->getMessage());
         }

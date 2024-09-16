@@ -34,9 +34,11 @@ class JWTAuthMiddleware
 
             $checkToken = $jwtAuth->isAuthValid($authorization, $apiKey);
 
-            if (!$checkToken) {
+            if ($checkToken['error']) {
                 throw new \InvalidArgumentException('Provided credentials are invalid.', 401);
             }
+
+            $request->merge([ 'restaurant_id' => $checkToken['restaurant_id'] ]);
 
             return $next($request);
         } catch (\InvalidArgumentException | UnexpectedValueException $th) {

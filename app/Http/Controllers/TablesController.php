@@ -15,9 +15,9 @@ class TablesController extends Controller
 
     public function index(): ApiResponseResource
     {
-        $users = $this->tableService->getAll(10);
+        $tables = $this->tableService->getAll(10);
 
-        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $users);
+        return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $tables);
     }
 
     public function show(string $id): ApiResponseResource

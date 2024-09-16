@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Table;
 
+use App\Http\Enums\TableStatus;
+use App\Http\Enums\TableLocation;
 use App\Http\Requests\BaseRequest;
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateTableRequest extends BaseRequest
 {
@@ -12,7 +14,7 @@ class CreateTableRequest extends BaseRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,8 +24,11 @@ class CreateTableRequest extends BaseRequest
      */
     public function rules(): array
     {
+        //add layout position - top and left and bottom
         return [
-            //
+            'restaurant_id' => 'required|uuid|exists:restaurants,id',
+            'capacity'      => 'required|integer',
+            'location'      => [ 'required', Rule::in(TableLocation::cases()) ],
         ];
     }
 }

@@ -19,44 +19,44 @@ Route::get('/', function () {
 
 Route::post(uri: 'consumer/', action: [ APIConsumerController::class, 'createAPIConsumer' ]);
 
-Route::middleware([ JWTAuthMiddleware::class, BasicAuthMiddleware::class])->group(function () {
 
-    Route::group([ 'prefix' => 'restaurant' ], function () {
-        Route::withoutMiddleware(middleware: [ JWTAuthMiddleware::class])->group(function () {
-            Route::post('/', action: [ RestaurantController::class, 'store' ]);
-            Route::post('user/authenticate', action: [ UsersController::class, 'authenticate' ]);
-        });
-
-        Route::withoutMiddleware(middleware: [ BasicAuthMiddleware::class])->group(function () {
-            Route::get('/', action: [ RestaurantController::class, 'index' ]);
-            Route::get('/{id}', [ RestaurantController::class, 'show' ]);
-            Route::put('/{id}', [ RestaurantController::class, 'update' ]);
-            Route::delete('/{id}', [ RestaurantController::class, 'destroy' ]);
-
-            Route::get('user/', [ UsersController::class, 'index' ]);
-            Route::get('user/{id}', [ UsersController::class, 'show' ]);
-            Route::post('user/', action: [ UsersController::class, 'store' ]);
-            Route::put('user/{id}', [ UsersController::class, 'update' ]);
-            Route::delete('user/{id}', [ UsersController::class, 'destroy' ]);
-
-            Route::get(uri: 'table/', action: [ TablesController::class, 'index' ]);
-            Route::get('table/{id}', [ TablesController::class, 'show' ]);
-            Route::post('table/', action: [ TablesController::class, 'store' ]);
-            Route::put('table/{id}', [ TablesController::class, 'update' ]);
-            Route::delete('table/{id}', [ TablesController::class, 'destroy' ]);
-        });
+Route::group([ 'prefix' => 'restaurant', 'middleware' => [ JWTAuthMiddleware::class, BasicAuthMiddleware::class] ], function () {
+    Route::post(uri: 'user/authenticate', action: [ UsersController::class, 'authenticate' ])->withoutMiddleware(middleware: JWTAuthMiddleware::class);
+    Route::withoutMiddleware(BasicAuthMiddleware::class)->group(function () {
+        Route::get('user/', [ UsersController::class, 'index' ]);
+        Route::get('user/{id}', [ UsersController::class, 'show' ]);
+        Route::post('user/', action: [ UsersController::class, 'store' ]);
+        Route::put('user/{id}', [ UsersController::class, 'update' ]);
+        Route::delete('user/{id}', [ UsersController::class, 'destroy' ]);
     });
 
-    Route::group([ 'prefix' => 'reservation' ], function () {
-        Route::withoutMiddleware([ JWTAuthMiddleware::class])->group(function () {
-            Route::get('/', [ ReservationsController::class, 'index' ]);
-            Route::get('/{id}', [ ReservationsController::class, 'show' ]);
-            Route::post('/', [ ReservationsController::class, 'store' ]);
-            Route::put('/{id}', [ ReservationsController::class, 'update' ]);
-            Route::delete('/{id}', [ ReservationsController::class, 'destroy' ]);
-        });
+    Route::post(uri: '/', action: [ RestaurantController::class, 'store' ])->withoutMiddleware(middleware: JWTAuthMiddleware::class);
+    Route::withoutMiddleware(BasicAuthMiddleware::class)->group(function () {
+        Route::get('/', action: [ RestaurantController::class, 'index' ]);
+        Route::get('/{id}', [ RestaurantController::class, 'show' ]);
+        Route::put('/{id}', [ RestaurantController::class, 'update' ]);
+        Route::delete('/{id}', [ RestaurantController::class, 'destroy' ]);
+    });
+
+    Route::withoutMiddleware(BasicAuthMiddleware::class)->group(function () {
+        Route::get(uri: 'table/', action: [ TablesController::class, 'index' ]);
+        Route::get('table/{id}', [ TablesController::class, 'show' ]);
+        Route::post('table/', action: [ TablesController::class, 'store' ]);
+        Route::put('table/{id}', [ TablesController::class, 'update' ]);
+        Route::delete('table/{id}', [ TablesController::class, 'destroy' ]);
     });
 });
+
+Route::group([ 'prefix' => 'reservation' ], function () {
+    Route::withoutMiddleware([ JWTAuthMiddleware::class])->group(function () {
+        Route::get('/', [ ReservationsController::class, 'index' ]);
+        Route::get('/{id}', [ ReservationsController::class, 'show' ]);
+        Route::post('/', [ ReservationsController::class, 'store' ]);
+        Route::put('/{id}', [ ReservationsController::class, 'update' ]);
+        Route::delete('/{id}', [ ReservationsController::class, 'destroy' ]);
+    });
+});
+
 
 Route::group([ 'prefix' => 'payment' ], function () {
     Route::post('/', function () {

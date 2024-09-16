@@ -110,6 +110,6 @@ class UserService implements IStandardContract
             $roles[] = strtolower($role->name);
         }
 
-        return JWTService::generateToken($user->id, $data['consumer_id'], '/', $roles);
+        return JWTService::generateToken($user->id, $data['consumer_id'], $user->restaurant_id, '/', $roles);
     }
 }

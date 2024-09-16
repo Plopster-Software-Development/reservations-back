@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Table;
 
+use App\Http\Enums\TableStatus;
+use App\Http\Enums\TableLocation;
 use App\Http\Requests\BaseRequest;
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTableRequest extends BaseRequest
 {
@@ -23,7 +25,10 @@ class UpdateTableRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            //
+            'table_name' => 'sometimes|string',
+            'capacity'   => 'sometimes|integer',
+            'location'   => [ 'sometimes', Rule::in(TableLocation::cases()) ],
+            'status'     => [ 'sometimes', Rule::in(TableStatus::cases()) ]
         ];
     }
 }

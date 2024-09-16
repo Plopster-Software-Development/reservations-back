@@ -3,17 +3,12 @@
 namespace App\Services;
 
 use App\Http\Resources\ApiResponseResource;
-use App\Models\User;
-use App\Services\Auth\JWTService;
-use Illuminate\Database\Eloquent\Model;
-use \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Models\Table;
 use App\Services\Contracts\IStandardContract;
 use App\Traits\ResponseHandler;
 use App\Traits\Utils;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use PhpParser\Error;
-use Illuminate\Support\Facades\Hash;
-
 
 class TableService implements IStandardContract
 {
@@ -22,13 +17,13 @@ class TableService implements IStandardContract
     public function getAll(int $paginate): ApiResponseResource
     {
         try {
-            $tasks = User::with('restaurant')->paginate($paginate);
+            $tables = Table::with('restaurant')->paginate($paginate);
 
-            if ($tasks->isEmpty()) {
-                throw new ModelNotFoundException('No users found.');
+            if ($tables->isEmpty()) {
+                throw new ModelNotFoundException('No tables found.');
             }
 
-            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $tasks);
+            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $tables);
         } catch (ModelNotFoundException $th) {
             return $this->response(httpCode: 404, methodName: __METHOD__, className: self::class, data: [], resultMessage: $th->getMessage());
         } catch (\Throwable $th) {
@@ -39,11 +34,11 @@ class TableService implements IStandardContract
     public function getById(string $id): ApiResponseResource
     {
         try {
-            $user = User::findOrFail($id);
+            $table = Table::findOrFail($id);
 
-            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $user);
+            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $table);
         } catch (ModelNotFoundException $th) {
-            return $this->response(httpCode: 404, methodName: __METHOD__, className: self::class, resultMessage: 'User could not be created.');
+            return $this->response(httpCode: 404, methodName: __METHOD__, className: self::class, resultMessage: 'Table could not be created.');
         } catch (\Throwable $th) {
             return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: 'An unexpected error just happened, check the trace of the error.');
         }
@@ -52,15 +47,17 @@ class TableService implements IStandardContract
     public function create(array $data): ApiResponseResource
     {
         try {
-            $user = User::create($data);
+            $data = array_merge($data, [ 'status' => 'available' ]);
 
-            if (!isset($user)) {
-                throw new Error('User could not be created.');
+            $table = Table::create($data);
+
+            if (!isset($table)) {
+                throw new Error('Table could not be created.');
             }
 
-            $user->load('restaurant');
+            $table->load('restaurant');
 
-            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $user);
+            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $table);
         } catch (\Throwable $th) {
             return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: $th->getMessage());
         }
@@ -69,13 +66,13 @@ class TableService implements IStandardContract
     public function update(string $id, array $data): ApiResponseResource
     {
         try {
-            $user = User::findOrFail($id);
+            $table = Table::findOrFail($id);
 
-            $updatedUser = tap($user)->update($data);
+            $updatedTable = tap($table)->update($data);
 
-            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $updatedUser);
+            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $updatedTable);
         } catch (ModelNotFoundException $th) {
-            return $this->response(httpCode: 404, methodName: __METHOD__, className: self::class, resultMessage: 'User not found.');
+            return $this->response(httpCode: 404, methodName: __METHOD__, className: self::class, resultMessage: 'Table not found.');
         } catch (\Throwable $th) {
             return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: $th->getMessage());
         }
@@ -84,13 +81,13 @@ class TableService implements IStandardContract
     public function delete(int|string $id): ApiResponseResource
     {
         try {
-            $user = User::findOrFail($id);
+            $table = Table::findOrFail($id);
 
-            $deletedUser = tap($user)->delete();
+            $deletedTable = tap($table)->delete();
 
-            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $deletedUser);
+            return $this->response(httpCode: 200, methodName: __METHOD__, className: self::class, data: $deletedTable);
         } catch (ModelNotFoundException $th) {
-            return $this->response(httpCode: 404, methodName: __METHOD__, className: self::class, resultMessage: 'User not found.');
+            return $this->response(httpCode: 404, methodName: __METHOD__, className: self::class, resultMessage: 'Table not found.');
         } catch (\Throwable $th) {
             return $this->response(httpCode: 500, methodName: __METHOD__, className: self::class, resultMessage: $th->getMessage());
         }
