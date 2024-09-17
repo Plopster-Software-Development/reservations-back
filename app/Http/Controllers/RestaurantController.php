@@ -25,4 +25,9 @@ class RestaurantController extends Controller
     {
         return $this->restaurantService->createRestaurant($request->validated());
     }
+
+    public function show()
+    {
+        return 'RestaurantController show';
+    }
 }

@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string(column: 'table_name');
             $table->integer('capacity');
             $table->string('location');
-            $table->string('status');
+            $table->string(column: 'status');
             $table->timestamps();
             $table->softDeletes();
 

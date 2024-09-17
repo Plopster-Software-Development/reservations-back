@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,10 +12,11 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('client_id')->index();
+            $table->foreignUuid(column: 'client_id')->index();
             $table->foreignUuid('table_id')->index();
             $table->dateTime('reservation_date');
             $table->string('status');
+            //agregar special request
             $table->timestamps();
 
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');

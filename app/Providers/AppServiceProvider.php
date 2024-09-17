@@ -26,11 +26,6 @@ class AppServiceProvider extends ServiceProvider
             $openApi->secure(
                 SecurityScheme::http('bearer', 'JWT')
             );
-
-            $openApi->secure(
-                securityScheme: SecurityScheme::apiKey('header', 'x-api-key')
-            );
         });
-
     }
 }

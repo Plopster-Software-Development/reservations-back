@@ -11,7 +11,7 @@ class CreateReservationRequest extends BaseRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class CreateReservationRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            //
+            'id client reserva'               => '',
+            'numero de personas'              => '',
+            'ubicacion mesa'                  => ';',
+            'fecha y hora'                    => '',
+            'anotacion especial para reserva' => ''
         ];
     }
 }
